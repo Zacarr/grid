@@ -1,0 +1,198 @@
+<script src="https://unpkg.com/vue@3"></script>
+<div class="row" id="app">
+	<div>
+		<label>Length</label><br>
+		<input type="number" v-model='lengths'/><br>
+		<label>Height</label><br>
+		<input type="number" v-model='heights'/><br>
+		<label>Width</label><br>
+		<input type="number" v-model='widths'/>
+	</div>
+	
+	<div v-for="(side, i) in sideTB">
+		<p>View {{ side }}</p>
+		<table>
+			<tr v-for="length in lengths">
+				<td @click="tableElement()" v-for="width in widths" :id="sideTB[i]+'-'+width+'-'+length" ></td>
+			</tr>
+		</table>
+	</div>
+
+	<div v-for="(side, i) in sideLR">
+		<p>View {{ side }}</p>
+		<table>
+			<tr v-for="length in lengths">
+				<td @click="tableElement()"v-for="height in heights"  :id="sideLR[i]+'-'+height+'-'+length" ></td>
+			</tr>
+		</table>
+	</div>
+	<div v-for="(side, i) in sideFB">
+		<p>View {{ side }}</p>
+		<table>
+			<tr v-for="height in heights">
+				<td @click="tableElement()" v-for="width in widths" :id="sideFB[i]+'-'+height+'-'+width" ></td>
+			</tr>
+		</table>
+	</div>
+
+	
+	<div>
+		<p>Color Picker</p>
+		<div id="color-preview">
+
+		</div>
+		<label>Red</label><br>
+		<input @change="colorChanger()" v-model="r" type="number" min="0" max="255" id="red-slider"><br>
+		<label>Green</label><br>
+		<input @change="colorChanger()" v-model="g" type="number" min="0" max="255" id="green-slider"><br>
+		<label>Blue</label><br>
+		<input @change="colorChanger()" v-model="b" type="number" min="0" max="255" id="blue-slider"><br>
+		<button @click="addingColors()" id="save-button">Save</button>
+	</div>
+	<div>
+		<p>Saved Colors</p>
+		<div @click="setColor(index)" :style="{ 'background':'rgb('+savedColor+')'}" class='palette' v-for="(savedColor, index) in savedColors"></div>
+	</div>
+	<div class="shape-container">
+		<p>Shapes</p>
+		<div @click="setDegree(-1, -1)" :style="{ 'background':'rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+')'}" class='palette'></div>
+		<div @click="setDegree(index, index)" v-for="(shape,index) in shapes" 
+		:style="{ 'background': 'linear-gradient('+ shape +', rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+'), rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%, transparent 50%)'}" 
+		class="palette half-filled">
+		</div>
+	</div>
+	<div class="shape-container">
+		<p>Shapes</p>
+		<div @click="setDegree(index, -2)"
+			v-for="(shape, index) in shapes.slice(0,4)" 
+			class='palette'
+			:style="{ 'background': 'linear-gradient('+shape+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)' }"
+		>
+		</div>
+	</div>
+	<div class="shape-container">
+		<p>Shapes</p>
+		<div @click="setDegree(index, -3)" 
+			v-for="(degree, index) in degrees.slice(0,8)" 
+			class="palette" 
+			:style="{ 'background' : 'linear-gradient('+degree+',white 50%, transparent 50%), linear-gradient('+degrees[index+2]+', transparent 50%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%)' }"
+		>
+		</div>
+	</div>
+</div>
+
+<script>
+const { createApp } = Vue
+
+createApp({
+  data() {
+	return {
+		sideTB: ['Top','Botton'],
+		sideLR: ['Left', 'Right'],
+		sideFB:['Front', 'Back'],
+		lengths: 9,
+		heights: 11,
+		widths: 12,
+		color: 'blue',
+		savedColors: [`0,0,0`,`255,0,0`],
+		shapes: ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg'],
+		degrees: ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg', '0deg','45deg'],
+		r: 0,
+		g: 0,
+		b: 0,
+		colorIndex: -1,
+		shapeIndex: -1,
+		degree: 0,
+		degree2:0
+	}
+	}, methods:{
+		addingColors(){
+			if(this.savedColors.includes(`${this.r},${this.g},${this.b}`) === false){
+				this.savedColors.push(`${this.r},${this.g},${this.b}`);
+			}
+		},
+		colorChanger(){
+			document.getElementById('color-preview').style.background = `rgb(${this.r}, ${this.g}, ${this.b})`;
+			this.colorIndex = -1;
+		},
+		tableElement(){
+			if(this.colorIndex == -1){
+				//Form inputs
+				if(this.shapeIndex==-1){
+					
+					document.getElementById(event.srcElement.id).style.background = `rgb(${this.r}, ${this.g}, ${this.b})`
+				}else if(this.shapeIndex==-2){
+					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, transparent 25%, rgb(${this.r},${this.g},${this.b}) 25% 75%, transparent 75%)`;
+				}else if(this.shapeIndex==-3){
+					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, white 50%, transparent 50%), linear-gradient(${this.degree2}, transparent 50%, rgb(${this.r}, ${this.g},${this.b }) 50%)`;
+				}else{
+					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, rgb(${this.r}, ${this.g}, ${this.b}) 50%, transparent 50%)`
+				}		
+			}else{
+				//form Palette
+				if(this.shapeIndex==-1){
+					document.getElementById(event.srcElement.id).style.background = `rgb(${this.savedColors[this.colorIndex]})`
+				}else if(this.shapeIndex==-2){
+					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, transparent 25%, rgb(${this.savedColors[this.colorIndex]}) 25% 75%, transparent 75%)`;
+				}else if(this.shapeIndex==-3){
+					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, white 50%, transparent 50%), linear-gradient(${this.degree2}, transparent 50%, rgb(${this.savedColors[this.colorIndex] }) 50%)`;
+				}else{
+					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, rgb(${this.savedColors[this.colorIndex]}) 50%, transparent 50%)`;
+				}
+				
+			}	
+		},
+		setColor(i){
+			document.getElementById('color-preview').style.background = `rgb(${this.savedColors[i]})`
+			this.colorIndex = i;
+			let rgb = this.savedColors[i].split(',');
+			this.r = rgb[0];
+			this.g = rgb[1];
+			this.b = rgb[2];
+		},
+		setDegree(i, shape){
+			this.shapeIndex = shape;
+			this.degree = this.shapes[i];
+			this.degree2 = this.degrees[i+2];
+		}
+	}
+}).mount('#app')
+
+</script>
+<style>
+	td{
+		padding: 0;
+	}
+	.palette{
+		width: 50px;
+		height: 50px;
+		margin: 0 auto 10px auto;
+		border: 1px solid black;
+	}
+	#color-preview{
+		width: 100px;
+		height: 100px;
+		border: 1px solid black;
+		background-color: black;
+		margin: 0 auto 0 auto;
+	}
+	table{
+		border-collapse: collapse;
+		margin: 0 10px 0 10px;
+	}
+	td{
+		width: 25px;
+		border: 1px black solid;	
+	}
+	tr{
+		height: 25px;
+	}
+	.row{
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.shape-container{
+		margin: 0 auto 0 auto;
+	}
+
+</style>
