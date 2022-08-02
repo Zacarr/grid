@@ -8,33 +8,38 @@
 		<label>Width</label><br>
 		<input type="number" v-model='widths'/>
 	</div>
+	<div class="row">
+		<div v-for="(side, i) in sideTB">
+			<p>View {{ side }}</p>
+			<table>
+				<tr v-for="length in lengths">
+					<td @click="tableElement()" v-for="width in widths" :id="sideTB[i]+'-'+width+'-'+length" ></td>
+				</tr>
+			</table>
+		</div>
+	</div>
 	
-	<div v-for="(side, i) in sideTB">
-		<p>View {{ side }}</p>
-		<table>
-			<tr v-for="length in lengths">
-				<td @click="tableElement()" v-for="width in widths" :id="sideTB[i]+'-'+width+'-'+length" ></td>
-			</tr>
-		</table>
+	<div class="row">
+		<div v-for="(side, i) in sideLR">
+			<p>View {{ side }}</p>
+			<table>
+				<tr v-for="length in lengths">
+					<td @click="tableElement()"v-for="height in heights"  :id="sideLR[i]+'-'+height+'-'+length" ></td>
+				</tr>
+			</table>
+		</div>
 	</div>
-
-	<div v-for="(side, i) in sideLR">
-		<p>View {{ side }}</p>
-		<table>
-			<tr v-for="length in lengths">
-				<td @click="tableElement()"v-for="height in heights"  :id="sideLR[i]+'-'+height+'-'+length" ></td>
-			</tr>
-		</table>
+	
+	<div class="row">
+		<div v-for="(side, i) in sideFB">
+			<p>View {{ side }}</p>
+			<table>
+				<tr v-for="height in heights">
+					<td @click="tableElement()" v-for="width in widths" :id="sideFB[i]+'-'+height+'-'+width" ></td>
+				</tr>
+			</table>
+		</div>
 	</div>
-	<div v-for="(side, i) in sideFB">
-		<p>View {{ side }}</p>
-		<table>
-			<tr v-for="height in heights">
-				<td @click="tableElement()" v-for="width in widths" :id="sideFB[i]+'-'+height+'-'+width" ></td>
-			</tr>
-		</table>
-	</div>
-
 	
 	<div>
 		<p>Color Picker</p>
