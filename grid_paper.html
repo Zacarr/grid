@@ -53,30 +53,65 @@
 		<p>Saved Colors</p>
 		<div @click="setColor(index)" :style="{ 'background':'rgb('+savedColor+')'}" class='palette' v-for="(savedColor, index) in savedColors"></div>
 	</div>
-	<div class="shape-container">
+	
+	<div>
 		<p>Shapes</p>
-		<div @click="setDegree(-1, -1)" :style="{ 'background':'rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+')'}" class='palette'></div>
-		<div @click="setDegree(index, index)" v-for="(shape,index) in shapes" 
-		:style="{ 'background': 'linear-gradient('+ shape +', rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+'), rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%, transparent 50%)'}" 
-		class="palette half-filled">
-		</div>
-	</div>
-	<div class="shape-container">
-		<p>Shapes</p>
-		<div @click="setDegree(index, -2)"
-			v-for="(shape, index) in shapes.slice(0,4)" 
-			class='palette'
-			:style="{ 'background': 'linear-gradient('+shape+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)' }"
-		>
-		</div>
-	</div>
-	<div class="shape-container">
-		<p>Shapes</p>
-		<div @click="setDegree(index, -3)" 
-			v-for="(degree, index) in degrees.slice(0,8)" 
-			class="palette" 
-			:style="{ 'background' : 'linear-gradient('+degree+',white 50%, transparent 50%), linear-gradient('+degrees[index+2]+', transparent 50%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%)' }"
-		>
+		<div class="row">
+
+			<div class="shape-container">
+				<div @click="setDegree(-1, -1)" 
+					id="1-0"
+					:style="{ 'background':'rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+')'}" 
+					class='palette'
+				>
+				</div>
+				<div 
+					@click="setDegree(index, index)" 
+					:id="1+'-'+index+1"
+					v-for="(shape,index) in degrees.slice(0,8)" 
+					:style="{ 'background': 'linear-gradient('+ shape +', rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+'), rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%, transparent 50%)'}" 
+					class="palette half-filled"
+				>
+				</div>
+			</div>
+	
+			<div class="shape-container">
+				<div @click="setDegree(index, -2)"
+					:id="2+'-'+index"
+					v-for="(shape, index) in degrees.slice(0,4)" 
+					class='palette'
+					:style="{ 'background': 'linear-gradient('+shape+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)' }"
+				>
+				</div>
+			</div>
+			<div class="shape-container">
+				<div @click="setDegree(index, -3)"
+					:id="3+'-'+index"
+					v-for="(degree, index) in degrees.slice(0,8)" 
+					class="palette" 
+					:style="{ 'background' : 'linear-gradient('+degree+',white 50%, transparent 50%), linear-gradient('+degrees[index+2]+', transparent 50%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%)' }"
+				>
+				</div>
+			</div>
+			<div class="shape-container">	
+				<div @click="setDegree(index, -4)"
+					:id="4+'-'+index"
+					v-for="(degree, index) in degrees.slice(0,1)"
+					class="palette"
+					:style="{ 'background': 'linear-gradient('+degree+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%), linear-gradient('+degrees[index+2]+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)'}"
+				>
+				</div>
+			</div>
+			<div class="shape-container">
+				<div 
+					@click="setDegree(index, -5)"
+					:id="5+'-'+index"
+					class="palette"
+					v-for="(degree, index) in degrees.slice(0,8)"
+					:style="{ 'background' : 'linear-gradient('+degree+', rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%, transparent 50%), linear-gradient('+degrees[index+2]+',transparent 50%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%)' }"
+				>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -95,7 +130,6 @@ createApp({
 		widths: 12,
 		color: 'blue',
 		savedColors: [`0,0,0`,`255,0,0`],
-		shapes: ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg'],
 		degrees: ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg', '0deg','45deg'],
 		r: 0,
 		g: 0,
@@ -103,7 +137,8 @@ createApp({
 		colorIndex: -1,
 		shapeIndex: -1,
 		degree: 0,
-		degree2:0
+		degree2:0,
+		preId: ''
 	}
 	}, methods:{
 		addingColors(){
@@ -116,30 +151,27 @@ createApp({
 			this.colorIndex = -1;
 		},
 		tableElement(){
-			if(this.colorIndex == -1){
-				//Form inputs
-				if(this.shapeIndex==-1){
+			let color;
+			if(this.colorIndex != 0){
+				//Form Input
+				color = `rgb(${this.r}, ${this.g}, ${this.b})`
 					
-					document.getElementById(event.srcElement.id).style.background = `rgb(${this.r}, ${this.g}, ${this.b})`
-				}else if(this.shapeIndex==-2){
-					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, transparent 25%, rgb(${this.r},${this.g},${this.b}) 25% 75%, transparent 75%)`;
-				}else if(this.shapeIndex==-3){
-					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, white 50%, transparent 50%), linear-gradient(${this.degree2}, transparent 50%, rgb(${this.r}, ${this.g},${this.b }) 50%)`;
-				}else{
-					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, rgb(${this.r}, ${this.g}, ${this.b}) 50%, transparent 50%)`
-				}		
 			}else{
-				//form Palette
-				if(this.shapeIndex==-1){
-					document.getElementById(event.srcElement.id).style.background = `rgb(${this.savedColors[this.colorIndex]})`
-				}else if(this.shapeIndex==-2){
-					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, transparent 25%, rgb(${this.savedColors[this.colorIndex]}) 25% 75%, transparent 75%)`;
-				}else if(this.shapeIndex==-3){
-					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, white 50%, transparent 50%), linear-gradient(${this.degree2}, transparent 50%, rgb(${this.savedColors[this.colorIndex] }) 50%)`;
-				}else{
-					document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, rgb(${this.savedColors[this.colorIndex]}) 50%, transparent 50%)`;
-				}
-				
+				//Form Palette
+				color = `rgb(${this.savedColors[this.colorIndex]})`;
+			}
+			if(this.shapeIndex==-1){
+				document.getElementById(event.srcElement.id).style.background = color;
+			}else if(this.shapeIndex==-2){
+				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
+			}else if(this.shapeIndex==-3){
+				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, white 50%, transparent 50%), linear-gradient(${this.degree2}, transparent 50%, ${color} 50%)`;
+			}else if(this.shapeIndex==-4){
+				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%), linear-gradient(${this.degree2}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
+			}else if(this.shapeIndex==-5){
+				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 50%, transparent 50%), linear-gradient(${this.degree2},transparent 50%, ${color} 50%)`;
+			}else{
+				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 50%, transparent 50%)`
 			}	
 		},
 		setColor(i){
@@ -152,8 +184,14 @@ createApp({
 		},
 		setDegree(i, shape){
 			this.shapeIndex = shape;
-			this.degree = this.shapes[i];
+			this.degree = this.degrees[i];
 			this.degree2 = this.degrees[i+2];
+			document.getElementById(event.srcElement.id).classList.add('active');
+			if(this.preId !== ''){	
+				document.getElementById(this.preId).classList.remove('active');
+				this.preId = '';
+			}
+			this.preId = event.srcElement.id;
 		}
 	}
 }).mount('#app')
@@ -194,5 +232,7 @@ createApp({
 	.shape-container{
 		margin: 0 auto 0 auto;
 	}
-
+	.active{
+		padding: 5px;
+	}
 </style>
