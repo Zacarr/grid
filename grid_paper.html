@@ -1,5 +1,5 @@
 <script src="https://unpkg.com/vue@3"></script>
-<div class="row" id="app">
+<div id="app">
 	<div>
 		<label>Length</label><br>
 		<input type="number" v-model='lengths'/><br>
@@ -40,23 +40,37 @@
 			</table>
 		</div>
 	</div>
-	
-	<div>
-		<p>Color Picker</p>
-		<div id="color-preview">
-
+	<div class="row">
+		<div>
+			<p>Color Picker</p>
+				<div class="row">
+				<div id="color-preview">
+				</div>
+				<div id="addtive-shapes">
+				</div>
+			</div>
+			<div class="row">
+				<div>
+					<label>Red</label><br>
+					<input @change="colorChanger()" v-model="r" type="number" min="0" max="255" id="red-slider"><br>
+					<label>Green</label><br>
+					<input @change="colorChanger()" v-model="g" type="number" min="0" max="255" id="green-slider"><br>
+					<label>Blue</label><br>
+					<input @change="colorChanger()" v-model="b" type="number" min="0" max="255" id="blue-slider"><br>
+					<button @click="addingColors()" id="save-button">Change</button>
+				</div>
+				<div>
+					{{addToggle}}<br>
+					<button @click="changeAddToggle()">Make Shape</button><br>
+					<button @click="saveUserShape()">Save</button><br>
+					<button @click="previewShapeClearer()">Clear</button>
+				</div>
+			</div>
 		</div>
-		<label>Red</label><br>
-		<input @change="colorChanger()" v-model="r" type="number" min="0" max="255" id="red-slider"><br>
-		<label>Green</label><br>
-		<input @change="colorChanger()" v-model="g" type="number" min="0" max="255" id="green-slider"><br>
-		<label>Blue</label><br>
-		<input @change="colorChanger()" v-model="b" type="number" min="0" max="255" id="blue-slider"><br>
-		<button @click="addingColors()" id="save-button">Save</button>
-	</div>
-	<div>
-		<p>Saved Colors</p>
-		<div @click="setColor(index)" :style="{ 'background':'rgb('+savedColor+')'}" class='palette' v-for="(savedColor, index) in savedColors"></div>
+		<div>
+			<p>Saved Colors</p>
+			<div @click="setColor(index)" :style="{ 'background':'rgb('+savedColor+')'}" class='palette' v-for="(savedColor, index) in savedColors"></div>
+		</div>
 	</div>
 	
 	<div>
@@ -80,15 +94,7 @@
 				</div>
 			</div>
 	
-			<div class="shape-container">
-				<div @click="setDegree(index, -2)"
-					:id="2+'-'+index"
-					v-for="(shape, index) in degrees.slice(0,4)" 
-					class='palette'
-					:style="{ 'background': 'linear-gradient('+shape+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)' }"
-				>
-				</div>
-			</div>
+			
 			<div class="shape-container">
 				<div
 					@click="setDegree(index, -7)"
@@ -96,6 +102,15 @@
 					class="palette"
 					v-for="(degree, index) in degrees.slice(0,8)"
 					:style="{ 'background' : 'linear-gradient('+degree+', rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25%, transparent 25%)' }"
+				>
+				</div>
+			</div>
+			<div class="shape-container">
+				<div @click="setDegree(index, -2)"
+					:id="2+'-'+index"
+					v-for="(shape, index) in degrees.slice(0,4)" 
+					class='palette'
+					:style="{ 'background': 'linear-gradient('+shape+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)' }"
 				>
 				</div>
 			</div>
@@ -137,7 +152,16 @@
 				>
 				</div>
 			</div>
-			
+			<div class="shape-container">
+				<div
+					@click="setDegree(index, -8)"
+					class="palette"
+					:id="8+'-'+index"
+					v-for="(shape, index) in userSaveShape"
+					:style="{'background' : shape}"
+				>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -150,21 +174,25 @@ createApp({
 	return {
 		sideTB: ['Top','Botton'],
 		sideLR: ['Left', 'Right'],
-		sideFB:['Front', 'Back'],
+		sideFB: ['Front', 'Back'],
 		lengths: 9,
 		heights: 11,
 		widths: 12,
-		color: 'blue',
-		savedColors: [`0,0,0`,`255,0,0`],
+		savedColors: [`0,0,0`,`255,0,0`,`0,255,0`,`0,0,255`],
 		degrees: ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg', '0deg','45deg'],
 		r: 0,
 		g: 0,
 		b: 0,
 		colorIndex: -1,
 		shapeIndex: -1,
+		addShapeIndex: 0,
 		degree: 0,
 		degree2:0,
-		preId: ''
+		preId: '',
+		shapeAdder: '',
+		addToggle: false,
+		userSaveShape: [],
+		userIndex: 0
 	}
 	}, methods:{
 		addingColors(){
@@ -177,32 +205,8 @@ createApp({
 			this.colorIndex = -1;
 		},
 		tableElement(){
-			let color;
-			if(this.colorIndex != 0){
-				//Form Input
-				color = `rgb(${this.r}, ${this.g}, ${this.b})`
-					
-			}else{
-				//Form Palette
-				color = `rgb(${this.savedColors[this.colorIndex]})`;
-			}
-			if(this.shapeIndex==-1){
-				document.getElementById(event.srcElement.id).style.background = color;
-			}else if(this.shapeIndex==-2){
-				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
-			}else if(this.shapeIndex==-3){
-				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, white 50%, transparent 50%), linear-gradient(${this.degree2}, transparent 50%, ${color} 50%)`;
-			}else if(this.shapeIndex==-4){
-				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%), linear-gradient(${this.degree2}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
-			}else if(this.shapeIndex==-5){
-				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 50%, transparent 50%), linear-gradient(${this.degree2},transparent 50%, ${color} 50%)`;
-			}else if(this.shapeIndex == -6){
-				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 25%, transparent 25%), linear-gradient(${this.degree},transparent 75%, ${color} 75%)`;
-			}else if(this.shapeIndex == -7){
-				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 25%, transparent 25%)`;
-			}else{
-				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 50%, transparent 50%)`
-			}	
+			
+			document.getElementById(event.srcElement.id).style.background = this.gradients();
 		},
 		setColor(i){
 			document.getElementById('color-preview').style.background = `rgb(${this.savedColors[i]})`
@@ -214,14 +218,68 @@ createApp({
 		},
 		setDegree(i, shape){
 			this.shapeIndex = shape;
+			this.userIndex = i;
 			this.degree = this.degrees[i];
 			this.degree2 = this.degrees[i+2];
 			document.getElementById(event.srcElement.id).classList.add('active');
-			if(this.preId !== ''){	
+			if(this.preId !== '' && this.preId !== event.srcElement.id){	
 				document.getElementById(this.preId).classList.remove('active');
 				this.preId = '';
 			}
 			this.preId = event.srcElement.id;
+			if(this.addToggle === true){
+				this.shapeAdder = this.gradients() + this.shapeAdder;
+				this.setShape()
+			}
+		},
+		previewShapeClearer(){
+			document.getElementById('addtive-shapes').style.background = `white`;
+			this.shapeAdder = '';
+		},
+		setShape(){
+			document.getElementById('addtive-shapes').style.background = this.shapeAdder;
+		},
+		gradients(){
+			let color;
+			let result='';
+			if(this.colorIndex != 0){
+				//Form Input
+				color = `rgb(${this.r}, ${this.g}, ${this.b})`		
+			}else{
+				//Form Palette
+				color = `rgb(${this.savedColors[this.colorIndex]})`;
+			}
+			
+
+			if(this.shapeIndex==-1){
+				result= color;
+			}else if(this.shapeIndex==-3){
+				result += `linear-gradient(${this.degree}, white 50%, transparent 50%), linear-gradient(${this.degree2}, transparent 50%, ${color} 50%)`;
+			}else if(this.shapeIndex==-4){
+				result += `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%), linear-gradient(${this.degree2}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
+			}else if(this.shapeIndex==-5){
+				result += `linear-gradient(${this.degree}, ${color} 50%, transparent 50%), linear-gradient(${this.degree2},transparent 50%, ${color} 50%)`;
+			}else if(this.shapeIndex == -6){
+				result += `linear-gradient(${this.degree}, ${color} 25%, transparent 25%), linear-gradient(${this.degree},transparent 75%, ${color} 75%)`;
+			}else if(this.shapeIndex==-2){
+				result += `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
+			}else if(this.shapeIndex == -7){
+				result += `linear-gradient(${this.degree}, ${color} 25%, transparent 25%)`;
+			}else if(this.shapeIndex == -8){		
+				result = this.userSaveShape[this.userIndex];
+			}else{
+				result +=`linear-gradient(${this.degree}, ${color} 50%, transparent 50%)`
+			}
+			if(this.addShapeIndex >0 && this.addToggle === true){
+				result+=', ';
+			}
+			
+			this.addShapeIndex++;
+			return result;
+		},changeAddToggle(){
+			this.addToggle = !this.addToggle;
+		},saveUserShape(){
+			this.userSaveShape.push(this.shapeAdder);
 		}
 	}
 }).mount('#app')
@@ -234,15 +292,20 @@ createApp({
 	.palette{
 		width: 50px;
 		height: 50px;
-		margin: 0 auto 10px auto;
+		margin: 0 5px 10px 5px;
 		border: 1px solid black;
+	}
+	#addtive-shapes{
+		width: 100px;
+		height: 100px;
+		border: 1px solid black;
+		margin-left: 10px;
 	}
 	#color-preview{
 		width: 100px;
 		height: 100px;
 		border: 1px solid black;
 		background-color: black;
-		margin: 0 auto 0 auto;
 	}
 	table{
 		border-collapse: collapse;
