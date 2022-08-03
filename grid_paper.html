@@ -94,7 +94,6 @@
 				</div>
 			</div>
 	
-			
 			<div class="shape-container">
 				<div
 					@click="setDegree(index, -7)"
@@ -105,6 +104,7 @@
 				>
 				</div>
 			</div>
+
 			
 			
 			<div class="shape-container">
@@ -148,6 +148,16 @@
 			</div>
 			<div class="shape-container">
 				<div
+					@click="setDegree(index, -3)"
+					id="3+'-'+index"
+					class="palette"
+					v-for="degree in degrees.slice(0,1)"
+					:style="{ 'background' : 'radial-gradient(rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%, transparent 50%)'}"	
+				>
+				</div>
+			</div>
+			<div class="shape-container">
+				<div
 					@click="setDegree(index, -8)"
 					class="palette"
 					:id="8+'-'+index"
@@ -155,7 +165,7 @@
 					:style="{'background' : shape}"
 				>
 				</div>
-			</div>
+			</div>			
 		</div>
 	</div>
 </div>
@@ -246,14 +256,16 @@ createApp({
 
 			if(this.shapeIndex==-1){
 				result= color;
+			}else if(this.shapeIndex == -2){
+				result += `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
+			}else if(this.shapeIndex == -3){
+				result += `radial-gradient(${color} 50%, transparent 50%)`;
 			}else if(this.shapeIndex == -4){
 				result += `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%), linear-gradient(${this.degree2}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
 			}else if(this.shapeIndex == -5){
 				result += `linear-gradient(${this.degree}, ${color} 50%, transparent 50%), linear-gradient(${this.degree2},transparent 50%, ${color} 50%)`;
 			}else if(this.shapeIndex == -6){
 				result += `linear-gradient(${this.degree}, ${color} 25%, transparent 25%), linear-gradient(${this.degree},transparent 75%, ${color} 75%)`;
-			}else if(this.shapeIndex == -2){
-				result += `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
 			}else if(this.shapeIndex == -7){
 				result += `linear-gradient(${this.degree}, ${color} 25%, transparent 25%)`;
 			}else if(this.shapeIndex == -8){		
