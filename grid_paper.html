@@ -75,7 +75,7 @@
 	
 	<div>
 		<p>Shapes</p>
-		<div class="row">
+		<div class="row shapes-container">
 
 			<div class="shape-container">
 				<div @click="setDegree(-1, -1)" 
@@ -105,33 +105,8 @@
 				>
 				</div>
 			</div>
-			<div class="shape-container">
-				<div @click="setDegree(index, -2)"
-					:id="2+'-'+index"
-					v-for="(shape, index) in degrees.slice(0,4)" 
-					class='palette'
-					:style="{ 'background': 'linear-gradient('+shape+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)' }"
-				>
-				</div>
-			</div>
-			<div class="shape-container">
-				<div @click="setDegree(index, -3)"
-					:id="3+'-'+index"
-					v-for="(degree, index) in degrees.slice(0,8)" 
-					class="palette" 
-					:style="{ 'background' : 'linear-gradient('+degree+',white 50%, transparent 50%), linear-gradient('+degrees[index+2]+', transparent 50%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%)' }"
-				>
-				</div>
-			</div>
-			<div class="shape-container">	
-				<div @click="setDegree(index, -4)"
-					:id="4+'-'+index"
-					v-for="(degree, index) in degrees.slice(0,1)"
-					class="palette"
-					:style="{ 'background': 'linear-gradient('+degree+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%), linear-gradient('+degrees[index+2]+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)'}"
-				>
-				</div>
-			</div>
+			
+			
 			<div class="shape-container">
 				<div 
 					@click="setDegree(index, -5)"
@@ -147,8 +122,27 @@
 					@click="setDegree(index, -6)"
 					:id="6+'-'+index"
 					class="palette"
-					v-for="(degree, index) in degrees.slice(0,8)"
+					v-for="(degree, index) in degrees.slice(0,4)"
 					:style="{ 'background' : 'linear-gradient('+degree+', rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25%, transparent 25%), linear-gradient('+degree+',transparent 75%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 75%)' }"
+				>
+				</div>
+			</div>
+			
+			<div class="shape-container">
+				<div @click="setDegree(index, -2)"
+					:id="2+'-'+index"
+					v-for="(shape, index) in degrees.slice(0,4)" 
+					class='palette'
+					:style="{ 'background': 'linear-gradient('+shape+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)' }"
+				>
+				</div>
+			</div>
+			<div class="shape-container">	
+				<div @click="setDegree(index, -4)"
+					:id="4+'-'+index"
+					v-for="(degree, index) in degrees.slice(0,1)"
+					class="palette"
+					:style="{ 'background': 'linear-gradient('+degree+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%), linear-gradient('+degrees[index+2]+', transparent 25%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25% 75%, transparent 75%)'}"
 				>
 				</div>
 			</div>
@@ -205,7 +199,6 @@ createApp({
 			this.colorIndex = -1;
 		},
 		tableElement(){
-			
 			document.getElementById(event.srcElement.id).style.background = this.gradients();
 		},
 		setColor(i){
@@ -253,15 +246,13 @@ createApp({
 
 			if(this.shapeIndex==-1){
 				result= color;
-			}else if(this.shapeIndex==-3){
-				result += `linear-gradient(${this.degree}, white 50%, transparent 50%), linear-gradient(${this.degree2}, transparent 50%, ${color} 50%)`;
-			}else if(this.shapeIndex==-4){
+			}else if(this.shapeIndex == -4){
 				result += `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%), linear-gradient(${this.degree2}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
-			}else if(this.shapeIndex==-5){
+			}else if(this.shapeIndex == -5){
 				result += `linear-gradient(${this.degree}, ${color} 50%, transparent 50%), linear-gradient(${this.degree2},transparent 50%, ${color} 50%)`;
 			}else if(this.shapeIndex == -6){
 				result += `linear-gradient(${this.degree}, ${color} 25%, transparent 25%), linear-gradient(${this.degree},transparent 75%, ${color} 75%)`;
-			}else if(this.shapeIndex==-2){
+			}else if(this.shapeIndex == -2){
 				result += `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
 			}else if(this.shapeIndex == -7){
 				result += `linear-gradient(${this.degree}, ${color} 25%, transparent 25%)`;
@@ -327,5 +318,8 @@ createApp({
 	}
 	.active{
 		padding: 5px;
+	}
+	.shapes-container{
+		box-shadow: inset 0 0 0 1000px rgb(0 0 0 / 20%);
 	}
 </style>

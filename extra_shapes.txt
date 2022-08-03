@@ -1,0 +1,13 @@
+<div class="shape-container">
+	<div @click="setDegree(index, -3)"
+		:id="3+'-'+index"
+		v-for="(degree, index) in degrees.slice(0,8)" 
+		class="palette" 
+		:style="{ 'background' : 'linear-gradient('+degree+',white 50%, transparent 50%), linear-gradient('+degrees[index+2]+', transparent 50%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 50%)' }"
+	>
+	</div>
+</div>
+
+else if(this.shapeIndex==-3){
+				result += `linear-gradient(${this.degree}, white 50%, transparent 50%), linear-gradient(${this.degree2}, transparent 50%, ${color} 50%)`;
+			}
