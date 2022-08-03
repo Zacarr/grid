@@ -90,6 +90,16 @@
 				</div>
 			</div>
 			<div class="shape-container">
+				<div
+					@click="setDegree(index, -7)"
+					:id="7+'-'+index"
+					class="palette"
+					v-for="(degree, index) in degrees.slice(0,8)"
+					:style="{ 'background' : 'linear-gradient('+degree+', rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25%, transparent 25%)' }"
+				>
+				</div>
+			</div>
+			<div class="shape-container">
 				<div @click="setDegree(index, -3)"
 					:id="3+'-'+index"
 					v-for="(degree, index) in degrees.slice(0,8)" 
@@ -117,6 +127,17 @@
 				>
 				</div>
 			</div>
+			<div class="shape-container">
+				<div
+					@click="setDegree(index, -6)"
+					:id="6+'-'+index"
+					class="palette"
+					v-for="(degree, index) in degrees.slice(0,8)"
+					:style="{ 'background' : 'linear-gradient('+degree+', rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 25%, transparent 25%), linear-gradient('+degree+',transparent 75%, rgb('+(colorIndex == -1 ? r+','+g+','+b :savedColors[colorIndex])+') 75%)' }"
+				>
+				</div>
+			</div>
+			
 		</div>
 	</div>
 </div>
@@ -175,6 +196,10 @@ createApp({
 				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, transparent 25%, ${color} 25% 75%, transparent 75%), linear-gradient(${this.degree2}, transparent 25%, ${color} 25% 75%, transparent 75%)`;
 			}else if(this.shapeIndex==-5){
 				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 50%, transparent 50%), linear-gradient(${this.degree2},transparent 50%, ${color} 50%)`;
+			}else if(this.shapeIndex == -6){
+				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 25%, transparent 25%), linear-gradient(${this.degree},transparent 75%, ${color} 75%)`;
+			}else if(this.shapeIndex == -7){
+				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 25%, transparent 25%)`;
 			}else{
 				document.getElementById(event.srcElement.id).style.background = `linear-gradient(${this.degree}, ${color} 50%, transparent 50%)`
 			}	
@@ -235,7 +260,7 @@ createApp({
 		flex-wrap: wrap;
 	}
 	.shape-container{
-		margin: 0 auto 0 auto;
+		margin: 0 10px 0 10px;
 	}
 	.active{
 		padding: 5px;
